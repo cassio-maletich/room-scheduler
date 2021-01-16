@@ -23,7 +23,7 @@
 
   <div class="field">
     <%= form.label :room_id %>
-    <%= form.select :room_id, options_for_select(@rooms, selected: @current_room), { prompt: "Selecione uma sala" }, { class: "custom-select mr-1" } %>
+    <%= form.select :room_id, options_for_select(@rooms, selected: params[:room_id]), { prompt: "Selecione uma sala" }, { class: "custom-select mr-1" } %>
     
   </div>
 
