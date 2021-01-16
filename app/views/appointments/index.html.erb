@@ -36,4 +36,6 @@
 
 <br>
 
+<%= react_component("Schedule", { appointments: @appointments }) %>
+
 <%= link_to 'New Appointment', new_appointment_path(room_id: @current_room.id) %>
