@@ -1,6 +1,6 @@
 class AppointmentsController < ApplicationController
   before_action :authenticate_user!
-  before_action :get_rooms, only: [:index, :new, :edit]
+  before_action :get_rooms, only: [:index, :new, :create, :edit]
   before_action :set_room, only: :index
   before_action :set_appointment, only: [:show, :edit, :update, :destroy]
 
