@@ -1,7 +1,7 @@
 class AppointmentsController < ApplicationController
   before_action :authenticate_user!
   before_action :get_rooms, only: [:index, :new, :edit]
-  before_action :set_room
+  before_action :set_room, only: :index
   before_action :set_appointment, only: [:show, :edit, :update, :destroy]
 
   # GET /appointments
@@ -71,7 +71,7 @@ class AppointmentsController < ApplicationController
     end
     
     def set_room
-      @current_room = Room.find(params[:room])
+      @current_room = params[:room].present? ? Room.find(params[:room]) : Room.first
     end
     
     def set_appointment
