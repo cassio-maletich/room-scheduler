@@ -64,6 +64,12 @@ class AppointmentsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "should not create appointment 7" do
+    assert_difference('Appointment.count', 0) do
+      post appointments_url, params: { appointment: { start: @appointment.start + 10.minute, end: @appointment.start + 30.minute, name: @appointment.name, room_id: @room.id } }
+    end
+  end
+
   test "should show appointment" do
     get appointment_url(@appointment)
     assert_response :success
