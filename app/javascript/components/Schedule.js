@@ -29,8 +29,8 @@ class Schedule extends React.Component {
     const appointments = this.props.appointments
     appointments.map((a) => {
       // js date obj conversion 
-      a.start = moment(a.date).toDate();
-      a.end = moment(a.date).add(30, "minutes").toDate();
+      a.start = moment(a.start).toDate();
+      a.end = moment(a.end).toDate();
     })
     this.setState({ appointments })
   }

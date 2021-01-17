@@ -14,7 +14,8 @@ class AppointmentsTest < ApplicationSystemTestCase
     visit appointments_url
     click_on "New Appointment"
 
-    fill_in "Date", with: @appointment.date
+    fill_in "Start", with: @appointment.start
+    fill_in "End", with: @appointment.end
     fill_in "Name", with: @appointment.name
     fill_in "Room", with: @appointment.room_id
     click_on "Create Appointment"
@@ -27,7 +28,8 @@ class AppointmentsTest < ApplicationSystemTestCase
     visit appointments_url
     click_on "Edit", match: :first
 
-    fill_in "Date", with: @appointment.date
+    fill_in "Start", with: @appointment.start
+    fill_in "End", with: @appointment.end
     fill_in "Name", with: @appointment.name
     fill_in "Room", with: @appointment.room_id
     click_on "Update Appointment"

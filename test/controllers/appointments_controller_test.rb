@@ -1,8 +1,13 @@
 require 'test_helper'
 
 class AppointmentsControllerTest < ActionDispatch::IntegrationTest
+  include Devise::Test::IntegrationHelpers
   setup do
+    # a1: 2021-01-16 17:00:00 - 18:00:00
     @appointment = appointments(:one)
+    @room = rooms(:one)
+    @room2 = rooms(:two)
+    sign_in users(:one)
   end
 
   test "should get index" do
@@ -17,10 +22,52 @@ class AppointmentsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create appointment" do
     assert_difference('Appointment.count') do
-      post appointments_url, params: { appointment: { date: @appointment.date, name: @appointment.name, room_id: @appointment.room_id } }
+      post appointments_url, params: { appointment: { start: @appointment.end, end: @appointment.end + 1.hour, name: @appointment.name, room_id: @room.id } }
     end
 
     assert_redirected_to appointment_url(Appointment.last)
+  end
+
+  test "should not create appointment 1" do
+    assert_difference('Appointment.count', 0) do
+      post appointments_url, params: { appointment: { start: @appointment.start, end: @appointment.end, name: @appointment.name, room_id: @room.id } }
+    end
+  end
+
+  test "should not create appointment 2" do
+    assert_difference('Appointment.count', 0) do
+      post appointments_url, params: { appointment: { start: @appointment.start - 1.hour, end: @appointment.end, name: @appointment.name, room_id: @room.id } }
+    end
+  end
+
+  test "should not create appointment 3" do
+    assert_difference('Appointment.count', 0) do
+      post appointments_url, params: { appointment: { start: @appointment.start - 15.minute, end: @appointment.end + 1.hour, name: @appointment.name, room_id: @room.id } }
+    end
+  end
+
+  test "should not create appointment 4" do
+    assert_difference('Appointment.count', 0) do
+      post appointments_url, params: { appointment: { start: @appointment.start, end: @appointment.end, name: @appointment.name, room_id: @room2.id } }
+    end
+  end
+
+  test "should not create appointment 5" do
+    assert_difference('Appointment.count', 0) do
+      post appointments_url, params: { appointment: { start: @appointment.start + 15.minute, end: @appointment.end, name: @appointment.name, room_id: @room2.id } }
+    end
+  end
+
+  test "should not create appointment 6" do
+    assert_difference('Appointment.count', 0) do
+      post appointments_url, params: { appointment: { start: @appointment.start + 15.minute, end: @appointment.end + 1.hour, name: @appointment.name, room_id: @room2.id } }
+    end
+  end
+
+  test "should not create appointment 7" do
+    assert_difference('Appointment.count', 0) do
+      post appointments_url, params: { appointment: { start: @appointment.start + 10.minute, end: @appointment.start + 30.minute, name: @appointment.name, room_id: @room.id } }
+    end
   end
 
   test "should show appointment" do
@@ -34,7 +81,7 @@ class AppointmentsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update appointment" do
-    patch appointment_url(@appointment), params: { appointment: { date: @appointment.date, name: @appointment.name, room_id: @appointment.room_id } }
+    patch appointment_url(@appointment), params: { appointment: { start: @appointment.start, end: @appointment.end, name: @appointment.name, room_id: @appointment.room_id } }
     assert_redirected_to appointment_url(@appointment)
   end
 
