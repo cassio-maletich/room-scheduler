@@ -2,6 +2,7 @@
 
 <h1>Agendamentos</h1>
 
+<%# TODO convert to rc %>
 <%= form_with url: appointments_path, method: :get, local: true do |f| %>
   <div class="form-group d-flex">
     <%= f.label :room, "Sala", class: "m-0 mr-1 align-self-center" %>
@@ -11,5 +12,3 @@
 <% end %>
 
 <%= react_component("Schedule", { appointments: @appointments }) %>
-
-<%= link_to 'New Appointment', new_appointment_path(room_id: @current_room.id) %>
