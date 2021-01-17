@@ -1,8 +1,11 @@
 require 'test_helper'
 
 class AppointmentsControllerTest < ActionDispatch::IntegrationTest
+  include Devise::Test::IntegrationHelpers
   setup do
     @appointment = appointments(:one)
+    @room = rooms(:one)
+    sign_in users(:one)
   end
 
   test "should get index" do
@@ -17,7 +20,7 @@ class AppointmentsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create appointment" do
     assert_difference('Appointment.count') do
-      post appointments_url, params: { appointment: { date: @appointment.date, name: @appointment.name, room_id: @appointment.room_id } }
+      post appointments_url, params: { appointment: { start: @appointment.start + 1.hour, end: @appointment.end + 1.hour, name: @appointment.name, room_id: @room.id } }
     end
 
     assert_redirected_to appointment_url(Appointment.last)
@@ -34,7 +37,7 @@ class AppointmentsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update appointment" do
-    patch appointment_url(@appointment), params: { appointment: { date: @appointment.date, name: @appointment.name, room_id: @appointment.room_id } }
+    patch appointment_url(@appointment), params: { appointment: { start: @appointment.start, end: @appointment.end, name: @appointment.name, room_id: @appointment.room_id } }
     assert_redirected_to appointment_url(@appointment)
   end
 
