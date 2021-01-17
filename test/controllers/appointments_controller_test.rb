@@ -22,7 +22,7 @@ class AppointmentsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create appointment" do
     assert_difference('Appointment.count') do
-      post appointments_url, params: { appointment: { start: @appointment.start + 1.hour, end: @appointment.end + 1.hour, name: @appointment.name, room_id: @room.id } }
+      post appointments_url, params: { appointment: { start: @appointment.end, end: @appointment.end + 1.hour, name: @appointment.name, room_id: @room.id } }
     end
 
     assert_redirected_to appointment_url(Appointment.last)
@@ -49,6 +49,18 @@ class AppointmentsControllerTest < ActionDispatch::IntegrationTest
   test "should not create appointment 4" do
     assert_difference('Appointment.count', 0) do
       post appointments_url, params: { appointment: { start: @appointment.start, end: @appointment.end, name: @appointment.name, room_id: @room2.id } }
+    end
+  end
+
+  test "should not create appointment 5" do
+    assert_difference('Appointment.count', 0) do
+      post appointments_url, params: { appointment: { start: @appointment.start + 15.minute, end: @appointment.end, name: @appointment.name, room_id: @room2.id } }
+    end
+  end
+
+  test "should not create appointment 6" do
+    assert_difference('Appointment.count', 0) do
+      post appointments_url, params: { appointment: { start: @appointment.start + 15.minute, end: @appointment.end + 1.hour, name: @appointment.name, room_id: @room2.id } }
     end
   end
 
