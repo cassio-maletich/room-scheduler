@@ -1,4 +1,10 @@
 class Appointment < ApplicationRecord
   belongs_to :room
-  validates_uniqueness_of :date, scope: :room_id
+  validate :check_conflict
+
+  def check_conflict
+    if Appointment.where('id <> ?', self.id).where(room_id: self.room_id).where('start BETWEEN ? AND ?', self.start.to_s, (self.end - 1.minute).to_s).present?
+      errors.add(:date, "Conflito com outro evento marcado")
+    end
+  end
 end
