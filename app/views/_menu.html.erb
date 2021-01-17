@@ -1,3 +1,20 @@
+<%# handle feedbacks %>
+<% if alert.present? %>
+  <div id="alert" class="alert alert-info alert-dismissible fixed-bottom mx-auto w-50 fade show" role="alert">
+    <%= alert %>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+<% elsif notice.present? %>
+  <div id="notice" class="alert alert-info alert-dismissible fixed-bottom mx-auto w-75 fade show" role="alert">
+    <%= notice %>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+<% end %>
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <a class="navbar-brand" href="#">Sch2day</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -16,6 +33,7 @@
         <%= link_to  "Novo compromisso", new_appointment_path(room_id: @current_room&.id), class: "btn btn-outline-primary ml-lg-3 my-2 my-lg-0" %>
       </li>
     </ul>
+    <span class="text-primary mr-2"><%= current_user.email %></span>
     <%= link_to 'Sair', destroy_user_session_path, method: :delete, class: "btn btn-outline-danger my-2 my-sm-0" %>
   </div>
 </nav>
