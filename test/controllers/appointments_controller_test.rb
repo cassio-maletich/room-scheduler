@@ -3,6 +3,7 @@ require 'test_helper'
 class AppointmentsControllerTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
   setup do
+    # a1: 2021-01-16 17:00:00 - 18:00:00
     @appointment = appointments(:one)
     @room = rooms(:one)
     sign_in users(:one)
@@ -24,6 +25,12 @@ class AppointmentsControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_redirected_to appointment_url(Appointment.last)
+  end
+
+  test "should not create appointment 1" do
+    assert_difference('Appointment.count', 0) do
+      post appointments_url, params: { appointment: { start: @appointment.start, end: @appointment.end, name: @appointment.name, room_id: @room.id } }
+    end
   end
 
   test "should show appointment" do
