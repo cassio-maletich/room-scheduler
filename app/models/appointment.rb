@@ -1,5 +1,6 @@
 class Appointment < ApplicationRecord
   belongs_to :room
+  belongs_to :user
   validate :check_time_window, :check_conflict
 
   def check_time_window
