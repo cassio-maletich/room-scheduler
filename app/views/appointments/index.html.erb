@@ -9,4 +9,4 @@
   </div>
 <% end %>
 
-<%= react_component "Schedule", { appointments: @appointments, current_user: current_user } %>
+<%= react_component "Schedule", { appointments: @appointments, current_user: current_user, rooms: @rooms, current_room: @current_room } %>

@@ -38,7 +38,8 @@ const customModalStyles = {
 
 class Schedule extends React.Component {
   state = {
-    appointments: []
+    appointments: [],
+    current_room: this.props.current_room
   }
 
   componentDidMount() {
@@ -56,6 +57,17 @@ class Schedule extends React.Component {
       <React.Fragment>
         <div>
           <h2>Agenda da Sala</h2>
+
+          <div className="btn-group btn-group-toggle mb-4">
+            { this.props.rooms.map((event, idx) => {
+                return(
+                  <label key={idx} className={`btn btn-secondary ${ event.id == this.state.current_room.id ? 'active' : '' }`}>
+                    <input type="radio" name="options" id="option1" autoComplete="off" /> { event.name }
+                  </label>
+                )
+              })
+            }
+          </div>
 
           <Calendar
             localizer={localizer}

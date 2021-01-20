@@ -67,7 +67,7 @@ class AppointmentsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def get_rooms
-      @rooms = Room.all.pluck(:name, :id)
+      @rooms = Room.all
     end
     
     def set_room
@@ -80,6 +80,6 @@ class AppointmentsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def appointment_params
-      params.require(:appointment).permit(:name, :start, :end, :room_id)
+      params.require(:appointment).permit(:name, :start, :end, :user_id, :room_id)
     end
 end
