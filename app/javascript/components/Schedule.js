@@ -2,73 +2,93 @@ import React from "react"
 import PropTypes from "prop-types"
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
-import Modal from 'react-modal';
+import Modal from 'react-modal'
+import { translations, customModalStyles } from './Constants'
 
 const localizer = momentLocalizer(moment)
-const TRANSLATIONS = {
-  month: 'Mês',
-  day: 'Dia',
-  week: 'Semana',
-  today: 'Hoje',
-  previous: '<',
-  next: '>',
-  agenda: 'Agenda',
-  date: 'Data',
-  time: 'Hora',
-  event: 'Evento',
-  showMore: function showMore(total) {
-    return "+" + total + " eventos";
-  }
-}
-
-const customModalStyles = {
-  content: {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)'
-  },
-  overlay: {
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
-    zIndex: 101
-  }
-}
 
 class Schedule extends React.Component {
-  state = {
-    appointments: []
+  constructor(props){
+    super(props)
+    this.state = {
+      appointments: [],
+      current_room: this.props.current_room
+    }
+    this.convertAppointments = this.convertAppointments.bind(this)
+    this.setRoom = this.setRoom.bind(this)
   }
 
   componentDidMount() {
-    const appointments = this.props.appointments
+    this.convertAppointments(this.props.appointments)
+  }
+
+  convertAppointments(appointments) {
     appointments.map((a) => {
       // js date obj conversion 
       a.start = moment(a.start).toDate();
       a.end = moment(a.end).toDate();
-    })
-    this.setState({ appointments })
+    });
+    this.setState({ appointments });
+  }
+
+  setRoom(room) {
+    // we prevent it from reaching the backend multiple times
+    if (this.state.current_room.id != room.id) {
+      this.setState({ current_room: room })
+      const url = `/appointments?room=${room.id}`
+      fetch(url, {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      })
+        .then((r) => {
+          if (r.status == 200) {
+            window.history.replaceState(null, "", url)
+            r.json().then((data) => {
+              this.convertAppointments(data)
+            })
+          }
+        })
+        .catch((r) => {
+          console.error("Não foi possível buscar a agenda", r.status, r)
+        })
+    }
   }
 
   render () {
     return (
       <React.Fragment>
-        <div>
-          <h2>Agenda da Sala</h2>
+        <div className="pt-2">
+          {/* Room selector */}
+          <div>
+            <h2>Agenda da Sala</h2>
+            <div className="btn-group btn-group-toggle mb-4">
+              { this.props.rooms.map((room, idx) => {
+                  return(
+                    <button key={idx} className={`btn btn-primary ${ room.id == this.state.current_room.id && 'active' }`} onClick={() => this.setRoom(room)}>
+                      { room.name }
+                    </button>
+                  )
+                })
+              }
+            </div>
+          </div>
 
+          {/* Calendar component */}
           <Calendar
             localizer={localizer}
             events={this.state.appointments}
             startAccessor="start"
             endAccessor="end"
             titleAccessor="name"
-            messages={TRANSLATIONS}
+            messages={translations}
             culture='pt-br'
             style={{ height: 500 }}
             onSelectEvent={event => this.setState({ evtModal: true, evtSelected: event })}
           />
 
+          {/* appointment details modal */}
           <Modal
             isOpen={this.state.evtModal}
             onRequestClose={this.closeModal}
