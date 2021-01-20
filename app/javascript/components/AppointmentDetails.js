@@ -5,9 +5,8 @@ import moment from 'moment'
 import { customModalStyles } from './Constants'
 
 class AppointmentDetails extends React.Component {
-  constructor(props) {
-    super(props)
-    this.requestCloseModal = this.requestCloseModal.bind(this)
+  requestCloseModal = () => {
+    this.props.callbackClose(true)
   }
 
   requestCloseModal() {

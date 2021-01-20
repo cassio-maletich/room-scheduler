@@ -9,24 +9,18 @@ import AppointmentDetails from './AppointmentDetails'
 const localizer = momentLocalizer(moment)
 
 class Schedule extends React.Component {
-  constructor(props){
-    super(props)
-    this.state = {
-      appointments: [],
-      current_room: this.props.current_room,
-      current_event: null,
-      current_event_modal: false
-    }
-    this.convertAppointments = this.convertAppointments.bind(this)
-    this.setRoom = this.setRoom.bind(this)
-    this.closeModal = this.closeModal.bind(this)
+  state = {
+    appointments: [],
+    current_room: this.props.current_room,
+    current_event: null,
+    current_event_modal: false
   }
 
   componentDidMount() {
     this.convertAppointments(this.props.appointments)
   }
 
-  convertAppointments(appointments) {
+  convertAppointments = (appointments) => {
     appointments.map((a) => {
       // js date obj conversion 
       a.start = moment(a.start).toDate();
@@ -35,8 +29,7 @@ class Schedule extends React.Component {
     this.setState({ appointments });
   }
 
-  setRoom(room) {
-    // we prevent it from reaching the backend multiple times
+  setRoom = (room) => {
     if (this.state.current_room.id != room.id) {
       this.setState({ current_room: room })
       const url = `/appointments?room=${room.id}`
@@ -60,7 +53,7 @@ class Schedule extends React.Component {
     }
   }
 
-  closeModal() {
+  closeModal = () => {
     this.setState({ current_event_modal: false })
   }
 
