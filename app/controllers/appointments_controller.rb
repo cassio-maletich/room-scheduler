@@ -8,6 +8,10 @@ class AppointmentsController < ApplicationController
   # GET /appointments.json
   def index
     @appointments = @current_room.present? ? @current_room.appointments : []
+    respond_to do |format|
+      format.html
+      format.json
+    end
   end
 
   # GET /appointments/1

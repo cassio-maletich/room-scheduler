@@ -37,9 +37,13 @@ const customModalStyles = {
 }
 
 class Schedule extends React.Component {
-  state = {
-    appointments: [],
-    current_room: this.props.current_room
+  constructor(props){
+    super(props)
+    this.state = {
+      appointments: [],
+      current_room: this.props.current_room
+    }
+    this.setRoom = this.setRoom.bind(this)
   }
 
   componentDidMount() {
@@ -52,23 +56,43 @@ class Schedule extends React.Component {
     this.setState({ appointments })
   }
 
+  setRoom(room) {
+    console.log('room', room)
+    this.setState({ current_room: room })
+    fetch(`/?room=${room.id}`, { headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    }})
+      .then((r) => {
+        if (r.status == 200) {
+          r.json().then((data) => {
+            this.setState({ appointments: data })
+          })
+        }
+      })
+      
+  }
+
   render () {
     return (
       <React.Fragment>
-        <div>
-          <h2>Agenda da Sala</h2>
-
-          <div className="btn-group btn-group-toggle mb-4">
-            { this.props.rooms.map((event, idx) => {
-                return(
-                  <label key={idx} className={`btn btn-secondary ${ event.id == this.state.current_room.id ? 'active' : '' }`}>
-                    <input type="radio" name="options" id="option1" autoComplete="off" /> { event.name }
-                  </label>
-                )
-              })
-            }
+        <div className="pt-2">
+          {/* Room selector */}
+          <div>
+            <h2>Agenda da Sala</h2>
+            <div className="btn-group btn-group-toggle mb-4">
+              { this.props.rooms.map((room, idx) => {
+                  return(
+                    <button key={idx} className={`btn btn-primary ${ room.id == this.state.current_room.id ? 'active' : '' }`} onClick={() => this.setRoom(room)}>
+                      { room.name }
+                    </button>
+                  )
+                })
+              }
+            </div>
           </div>
 
+          {/* Calendar component */}
           <Calendar
             localizer={localizer}
             events={this.state.appointments}
@@ -81,6 +105,7 @@ class Schedule extends React.Component {
             onSelectEvent={event => this.setState({ evtModal: true, evtSelected: event })}
           />
 
+          {/* appointment details modal */}
           <Modal
             isOpen={this.state.evtModal}
             onRequestClose={this.closeModal}

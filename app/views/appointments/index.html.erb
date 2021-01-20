@@ -1,12 +1,1 @@
-<h1>Agendamentos</h1>
-
-<%# TODO convert to rc %>
-<%= form_with url: appointments_path, method: :get, local: true do |f| %>
-  <div class="form-group d-flex">
-    <%= f.label :room, "Sala", class: "m-0 mr-1 align-self-center" %>
-    <%= f.select :room, options_for_select(@rooms, selected: @current_room.id), { prompt: "Selecione uma sala" }, { class: "custom-select mr-1" } %>
-    <%= f.submit "Visualizar agenda", class: "btn btn-primary" %>
-  </div>
-<% end %>
-
 <%= react_component "Schedule", { appointments: @appointments, current_user: current_user, rooms: @rooms, current_room: @current_room } %>
