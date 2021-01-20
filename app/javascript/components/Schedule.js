@@ -2,9 +2,9 @@ import React from "react"
 import PropTypes from "prop-types"
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
-import Modal from 'react-modal'
-import { translations, customModalStyles } from './Constants'
+import { translations } from './Constants'
 import RoomSelector from './RoomSelector'
+import AppointmentDetails from './AppointmentDetails'
 
 const localizer = momentLocalizer(moment)
 
@@ -13,7 +13,9 @@ class Schedule extends React.Component {
     super(props)
     this.state = {
       appointments: [],
-      current_room: this.props.current_room
+      current_room: this.props.current_room,
+      current_event: null,
+      current_event_modal: false
     }
     this.convertAppointments = this.convertAppointments.bind(this)
     this.setRoom = this.setRoom.bind(this)
@@ -59,7 +61,7 @@ class Schedule extends React.Component {
   }
 
   closeModal() {
-    this.setState({ evtModal: false })
+    this.setState({ current_event_modal: false })
   }
 
   render () {
@@ -81,32 +83,17 @@ class Schedule extends React.Component {
             messages={translations}
             culture='pt-br'
             style={{ height: 500 }}
-            onSelectEvent={event => this.setState({ evtModal: true, evtSelected: event })}
+            onSelectEvent={event => this.setState({ current_event_modal: true, current_event: event })}
           />
 
-          {/* appointment details modal */}
-          <Modal
-            isOpen={this.state.evtModal}
-            onRequestClose={this.closeModal}
-            style={customModalStyles}
-            ariaHideApp={false}
-          >
-            {!!this.state.evtSelected &&
-              <div className="inner-modal-evt">
-                <button className="inner-close" onClick={this.closeModal} type="button" className="close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-                <h2 className="mb-2">
-                  {this.state.evtSelected.name}
-                </h2>
-                <span>Sala reservada no seguinte horário: </span><br/>
-                <h4 className="text-center mb-3">{moment(this.state.evtSelected.start).format("DD-MM HH:mm")} até {moment(this.state.evtSelected.end).format("DD-MM HH:mm")}</h4>
-                { this.props.current_user.id == this.state.evtSelected.user_id &&
-                  <button type="button" onClick={this.editEvent} className="btn btn-danger ml-auto d-block">Excluir reserva</button>
-                }
-              </div>
-            }
-          </Modal>
+          {/* Appointment details modal */}
+          <AppointmentDetails
+            current_event={this.state.current_event} 
+            current_user={this.props.current_user} 
+            modal={this.state.current_event_modal} 
+            callbackClose={this.closeModal}
+          />
+
         </div>
       </React.Fragment>
     );
