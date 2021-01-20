@@ -62,7 +62,9 @@ class AppointmentsController < ApplicationController
   # DELETE /appointments/1
   # DELETE /appointments/1.json
   def destroy
+    return head 401 if @appointment.user_id != current_user.id
     @appointment.destroy
+    
     respond_to do |format|
       format.html { redirect_to appointments_url, notice: 'Appointment was successfully destroyed.' }
       format.json { head :no_content }

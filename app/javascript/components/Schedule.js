@@ -53,6 +53,20 @@ class Schedule extends React.Component {
     }
   }
 
+  removeItem = () => {
+    console.log('removeItem')
+    let { appointments, current_event } = this.state
+    console.log('removeItem', current_event)
+    console.log('removeItem 2', appointments)
+    console.log('removeItem 2', appointments.filter((a) => a.id != current_event.id))
+    this.setState({
+      appointments: appointments.filter((a) => a.id != current_event.id ),
+      current_event: null,
+      current_event_modal: false
+    })
+    console.log('closinggg Modal')
+  }
+
   closeModal = () => {
     this.setState({ current_event_modal: false })
   }
@@ -85,6 +99,7 @@ class Schedule extends React.Component {
             current_user={this.props.current_user} 
             modal={this.state.current_event_modal} 
             callbackClose={this.closeModal}
+            callbackRemove={this.removeItem}
           />
 
         </div>
