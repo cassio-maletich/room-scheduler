@@ -2,12 +2,14 @@
 
 one:
   name: MyString
-  start: 2021-01-16 17:00:00
-  end: 2021-01-16 18:00:00
+  start: 2021-01-20 17:00:00
+  end: 2021-01-20 18:00:00
   room: one
+  user: one
 
 two:
   name: MyString
-  start: 2021-01-16 17:00:00
-  end: 2021-01-16 18:00:00
+  start: 2021-01-20 17:00:00
+  end: 2021-01-20 18:00:00
   room: two
+  user: two
