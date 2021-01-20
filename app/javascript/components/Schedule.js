@@ -33,9 +33,10 @@ class Schedule extends React.Component {
 
   setRoom(room) {
     // we prevent it from reaching the backend multiple times
-    if (this.state.current_room != room) {
-      this.setState({ current_room: room })     
-      fetch(`/?room=${room.id}`, {
+    if (this.state.current_room.id != room.id) {
+      this.setState({ current_room: room })
+      const url = `/appointments?room=${room.id}`
+      fetch(url, {
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
@@ -43,6 +44,7 @@ class Schedule extends React.Component {
       })
         .then((r) => {
           if (r.status == 200) {
+            window.history.replaceState(null, "", url)
             r.json().then((data) => {
               this.convertAppointments(data)
             })
