@@ -83,7 +83,7 @@ class Schedule extends React.Component {
             <div className="btn-group btn-group-toggle mb-4">
               { this.props.rooms.map((room, idx) => {
                   return(
-                    <button key={idx} className={`btn btn-primary ${ room.id == this.state.current_room.id ? 'active' : '' }`} onClick={() => this.setRoom(room)}>
+                    <button key={idx} className={`btn btn-primary ${ room.id == this.state.current_room.id && 'active' }`} onClick={() => this.setRoom(room)}>
                       { room.name }
                     </button>
                   )
