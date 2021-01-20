@@ -16,6 +16,7 @@ class Schedule extends React.Component {
     }
     this.convertAppointments = this.convertAppointments.bind(this)
     this.setRoom = this.setRoom.bind(this)
+    this.closeModal = this.closeModal.bind(this)
   }
 
   componentDidMount() {
@@ -54,6 +55,10 @@ class Schedule extends React.Component {
           console.error("Não foi possível buscar a agenda", r.status, r)
         })
     }
+  }
+
+  closeModal() {
+    this.setState({ evtModal: false })
   }
 
   render () {
@@ -97,7 +102,7 @@ class Schedule extends React.Component {
           >
             {!!this.state.evtSelected &&
               <div className="inner-modal-evt">
-                <button className="inner-close" onClick={() => this.setState({ evtModal: false })} type="button" className="close">
+                <button className="inner-close" onClick={this.closeModal} type="button" className="close">
                   <span aria-hidden="true">&times;</span>
                 </button>
                 <h2 className="mb-2">
