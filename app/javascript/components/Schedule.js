@@ -57,20 +57,26 @@ class Schedule extends React.Component {
   }
 
   setRoom(room) {
-    console.log('room', room)
-    this.setState({ current_room: room })
-    fetch(`/?room=${room.id}`, { headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    }})
-      .then((r) => {
-        if (r.status == 200) {
-          r.json().then((data) => {
-            this.setState({ appointments: data })
-          })
+    // we prevent it from reaching the backend multiple times
+    if (this.state.current_room != room) {
+      this.setState({ current_room: room })     
+      fetch(`/?room=${room.id}`, {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
         }
       })
-      
+        .then((r) => {
+          if (r.status == 200) {
+            r.json().then((data) => {
+              this.convertAppointments(data)
+            })
+          }
+        })
+        .catch((r) => {
+          console.error("Não foi possível buscar a agenda", r.status, r)
+        })
+    }
   }
 
   render () {
