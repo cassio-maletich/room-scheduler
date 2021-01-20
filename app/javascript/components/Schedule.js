@@ -4,6 +4,7 @@ import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
 import Modal from 'react-modal'
 import { translations, customModalStyles } from './Constants'
+import RoomSelector from './RoomSelector'
 
 const localizer = momentLocalizer(moment)
 
@@ -65,20 +66,10 @@ class Schedule extends React.Component {
     return (
       <React.Fragment>
         <div className="pt-2">
+          <h2>Agenda da Sala</h2>
+
           {/* Room selector */}
-          <div>
-            <h2>Agenda da Sala</h2>
-            <div className="btn-group btn-group-toggle mb-4">
-              { this.props.rooms.map((room, idx) => {
-                  return(
-                    <button key={idx} className={`btn btn-primary ${ room.id == this.state.current_room.id && 'active' }`} onClick={() => this.setRoom(room)}>
-                      { room.name }
-                    </button>
-                  )
-                })
-              }
-            </div>
-          </div>
+          <RoomSelector rooms={this.props.rooms} current={this.state.current_room} callbackRoom={this.setRoom} />
 
           {/* Calendar component */}
           <Calendar
