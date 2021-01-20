@@ -2,39 +2,10 @@ import React from "react"
 import PropTypes from "prop-types"
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
-import Modal from 'react-modal';
+import Modal from 'react-modal'
+import { translations, customModalStyles } from './Constants'
 
 const localizer = momentLocalizer(moment)
-const TRANSLATIONS = {
-  month: 'Mês',
-  day: 'Dia',
-  week: 'Semana',
-  today: 'Hoje',
-  previous: '<',
-  next: '>',
-  agenda: 'Agenda',
-  date: 'Data',
-  time: 'Hora',
-  event: 'Evento',
-  showMore: function showMore(total) {
-    return "+" + total + " eventos";
-  }
-}
-
-const customModalStyles = {
-  content: {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)'
-  },
-  overlay: {
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
-    zIndex: 101
-  }
-}
 
 class Schedule extends React.Component {
   constructor(props){
@@ -105,7 +76,7 @@ class Schedule extends React.Component {
             startAccessor="start"
             endAccessor="end"
             titleAccessor="name"
-            messages={TRANSLATIONS}
+            messages={translations}
             culture='pt-br'
             style={{ height: 500 }}
             onSelectEvent={event => this.setState({ evtModal: true, evtSelected: event })}
