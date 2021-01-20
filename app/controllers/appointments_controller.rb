@@ -32,7 +32,8 @@ class AppointmentsController < ApplicationController
   # POST /appointments.json
   def create
     @appointment = Appointment.new(appointment_params)
-
+    @appointment.user = current_user
+    
     respond_to do |format|
       if @appointment.save
         format.html { redirect_to @appointment, notice: 'Appointment was successfully created.' }
