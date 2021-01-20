@@ -29,11 +29,8 @@
       <li class="nav-item">
         <a class="nav-link" href="#">Sobre</a>
       </li>
-      <li class="nav-item">
-        <%= link_to  "Novo compromisso", new_appointment_path(room_id: @current_room&.id), class: "btn btn-outline-primary ml-lg-3 my-2 my-lg-0" %>
-      </li>
     </ul>
-    <span class="text-primary mr-2"><%= current_user.email %></span>
-    <%= link_to 'Sair', destroy_user_session_path, method: :delete, class: "btn btn-outline-danger my-2 my-sm-0" %>
+    <span class="text-light mr-2"><%= current_user.email %></span>
+    <%= link_to 'Sair', destroy_user_session_path, method: :delete, class: "btn btn-outline-light my-2 my-sm-0" %>
   </div>
 </nav>
