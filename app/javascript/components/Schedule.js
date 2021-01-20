@@ -2,6 +2,7 @@ import React from "react"
 import PropTypes from "prop-types"
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
+import Modal from 'react-modal';
 
 const localizer = momentLocalizer(moment)
 const TRANSLATIONS = {
@@ -17,6 +18,21 @@ const TRANSLATIONS = {
   event: 'Evento',
   showMore: function showMore(total) {
     return "+" + total + " eventos";
+  }
+}
+
+const customModalStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)'
+  },
+  overlay: {
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    zIndex: 101
   }
 }
 
@@ -50,7 +66,31 @@ class Schedule extends React.Component {
             messages={TRANSLATIONS}
             culture='pt-br'
             style={{ height: 500 }}
+            onSelectEvent={event => this.setState({ evtModal: true, evtSelected: event })}
           />
+
+          <Modal
+            isOpen={this.state.evtModal}
+            onRequestClose={this.closeModal}
+            style={customModalStyles}
+            ariaHideApp={false}
+          >
+            {!!this.state.evtSelected &&
+              <div className="inner-modal-evt">
+                <button className="inner-close" onClick={() => this.setState({ evtModal: false })} type="button" className="close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                <h2 className="mb-2">
+                  {this.state.evtSelected.name}
+                </h2>
+                <span>Sala reservada no seguinte horário: </span><br/>
+                <h4 className="text-center mb-3">{moment(this.state.evtSelected.start).format("DD-MM HH:mm")} até {moment(this.state.evtSelected.end).format("DD-MM HH:mm")}</h4>
+                { this.props.current_user.id == this.state.evtSelected.user_id &&
+                  <button type="button" onClick={this.editEvent} className="btn btn-danger ml-auto d-block">Excluir reserva</button>
+                }
+              </div>
+            }
+          </Modal>
         </div>
       </React.Fragment>
     );
