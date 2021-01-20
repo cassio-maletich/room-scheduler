@@ -14,17 +14,21 @@ class Schedule extends React.Component {
       appointments: [],
       current_room: this.props.current_room
     }
+    this.convertAppointments = this.convertAppointments.bind(this)
     this.setRoom = this.setRoom.bind(this)
   }
 
   componentDidMount() {
-    const appointments = this.props.appointments
+    this.convertAppointments(this.props.appointments)
+  }
+
+  convertAppointments(appointments) {
     appointments.map((a) => {
       // js date obj conversion 
       a.start = moment(a.start).toDate();
       a.end = moment(a.end).toDate();
-    })
-    this.setState({ appointments })
+    });
+    this.setState({ appointments });
   }
 
   setRoom(room) {
