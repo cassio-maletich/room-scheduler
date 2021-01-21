@@ -35,6 +35,13 @@ class AppointmentsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "should create appointment 3" do
+    assert_difference 'Appointment.count' do
+      dt = DateTime.new 2021, 1, 20, 16, 0, 0, '-3'
+      post appointments_url, params: { appointment: { start: dt, end: dt + 1.hour, name: @appointment.name, room_id: @appointment.room_id } }
+    end
+  end
+
   test "should not create appointment 1" do
     assert_no_difference 'Appointment.count' do
       post appointments_url, params: { appointment: { start: @appointment.start, end: @appointment.end, name: @appointment.name, room_id: @room.id } }
