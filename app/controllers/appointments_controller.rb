@@ -36,7 +36,7 @@ class AppointmentsController < ApplicationController
     
     respond_to do |format|
       if @appointment.save
-        format.html { redirect_to @appointment, notice: 'Appointment was successfully created.' }
+        format.html { redirect_to appointments_path(room: @appointment.room.id), notice: 'Appointment was successfully created.' }
         format.json { render :show, status: :created, location: @appointment }
       else
         format.html { render :new }
