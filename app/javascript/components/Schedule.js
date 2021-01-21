@@ -74,7 +74,7 @@ class Schedule extends React.Component {
   render () {
     return (
       <React.Fragment>
-        <div className="pt-2">
+        <div>
           <h2>Agendamento de Sala</h2>
 
           <div className="d-flex mb-2">

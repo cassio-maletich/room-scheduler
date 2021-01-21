@@ -11,23 +11,23 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= form.label :name %>
-    <%= form.text_field :name %>
+  <div class="form-group">
+    <%= form.label :name, "Nome do evento" %>
+    <%= form.text_field :name, class: 'form-control' %>
   </div>
 
-  <div class="field">
-    <%= form.label :start %>
-    <%= form.datetime_select :start %>
+  <div class="form-group">
+    <%= form.label :start, "Data de início" %><br/>
+    <%= form.datetime_select :start, { order: [:day, :month, :year] }, class: 'form-control-xs' %>
   </div>
 
-  <div class="field">
-    <%= form.label :end %>
-    <%= form.datetime_select :end %>
+  <div class="form-group">
+    <%= form.label :end, "Data de fim" %><br/>
+    <%= form.datetime_select :end, { order: [:day, :month, :year] }, class: 'form-control-xs' %>
   </div>
 
-  <div class="field">
-    <%= form.label :room_id %>
+  <div class="form-group">
+    <%= form.label :room_id, "Sala" %><br/>
     <%= form.select :room_id, options_for_select(@rooms.map{ |r| [r.name, r.id]}, selected: params[:room_id]), { prompt: "Selecione uma sala" }, { class: "custom-select w-50" } %>
   </div>
 
