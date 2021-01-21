@@ -1,8 +1,8 @@
 import React from "react"
 import PropTypes from "prop-types"
-import { Calendar, momentLocalizer } from 'react-big-calendar'
+import { Calendar, momentLocalizer, Views } from 'react-big-calendar'
 import moment from 'moment'
-import { translations } from './Constants'
+import { translations, csrfToken } from './Constants'
 import RoomSelector from './RoomSelector'
 import AppointmentDetails from './AppointmentDetails'
 
@@ -13,7 +13,8 @@ class Schedule extends React.Component {
     appointments: [],
     current_room: this.props.current_room,
     current_event: null,
-    current_event_modal: false
+    current_event_modal: false,
+    error: null
   }
 
   componentDidMount() {
@@ -71,6 +72,57 @@ class Schedule extends React.Component {
     this.setState({ current_event_modal: false })
   }
 
+  handleSelectCreation = ({ start, end }) => {
+    const title = window.prompt('Nome do novo evento')
+    let appointment = {
+      name: title,
+      room_id: this.state.current_room.id,
+      start, 
+      end
+    }
+    console.log('title', appointment)
+    if (title) {
+      fetch('/appointments/', {
+        method: 'POST',
+        headers: {
+          "X-CSRF-Token": csrfToken,
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          appointment: appointment
+        })
+      })
+        .then((r) => {
+          console.log('r', r.text)
+          const status = r.status;
+
+          return r.text().then((data) => {
+            if (status == 201) {
+              console.log('data', data)
+              this.setState({
+                appointments: [
+                  ...this.state.appointments,
+                  {
+                    ...appointment,
+                    id: data,
+                    user_id: this.props.current_user.id
+                  },
+                ],
+                error: null
+              })
+            } else {
+              console.log("Erro na criação", data);
+              this.setState({ error: data })
+            }
+          })
+        })
+        .catch((r) => {
+          console.error("Não foi possível criar o evento", r)
+        })
+    }
+  }
+
   render () {
     return (
       <React.Fragment>
@@ -90,6 +142,7 @@ class Schedule extends React.Component {
 
           {/* Calendar component */}
           <Calendar
+            selectable
             localizer={localizer}
             events={this.state.appointments}
             startAccessor="start"
@@ -98,7 +151,9 @@ class Schedule extends React.Component {
             messages={translations}
             culture='pt-br'
             style={{ height: 500 }}
+            defaultView={Views.WEEK}
             onSelectEvent={event => this.setState({ current_event_modal: true, current_event: event })}
+            onSelectSlot={this.handleSelectCreation}
           />
 
           {/* Appointment details modal */}
@@ -109,6 +164,16 @@ class Schedule extends React.Component {
             callbackClose={this.closeModal}
             callbackRemove={this.removeItem}
           />
+
+          {/* Feedback for creation error */}
+          { !!this.state.error &&
+            <div id="notice" class="alert alert-danger alert-dismissible fixed-bottom mx-auto w-75 fade show" role="alert">
+              { this.state.error }
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          }
 
         </div>
       </React.Fragment>
