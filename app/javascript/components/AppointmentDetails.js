@@ -2,9 +2,7 @@ import React from "react"
 import PropTypes from "prop-types"
 import Modal from 'react-modal'
 import moment from 'moment'
-import { customModalStyles } from './Constants'
-
-const csrfToken = document.querySelector("[name='csrf-token']").content
+import { customModalStyles, csrfToken } from './Constants'
 
 class AppointmentDetails extends React.Component {
   requestCloseModal = () => {

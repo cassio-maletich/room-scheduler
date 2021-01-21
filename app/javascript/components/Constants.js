@@ -28,3 +28,5 @@ export const customModalStyles = {
         zIndex: 101
     }
 }
+
+export const csrfToken = document.querySelector("[name='csrf-token']").content
