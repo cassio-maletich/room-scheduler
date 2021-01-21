@@ -75,10 +75,18 @@ class Schedule extends React.Component {
     return (
       <React.Fragment>
         <div className="pt-2">
-          <h2>Agenda da Sala</h2>
+          <h2>Agendamento de Sala</h2>
 
-          {/* Room selector */}
-          <RoomSelector rooms={this.props.rooms} current={this.state.current_room} callbackRoom={this.setRoom} />
+          <div className="d-flex mb-2">
+            <div className="mr-auto">
+              {/* Room selector */}
+              <RoomSelector rooms={this.props.rooms} current={this.state.current_room} callbackRoom={this.setRoom} />
+            </div>
+            <div>
+              {/* New appointment btn */}
+              <a href={`/appointments/new?room_id=${this.state.current_room.id}`} className="btn btn-primary">Novo agendamento</a>
+            </div>
+          </div>
 
           {/* Calendar component */}
           <Calendar
