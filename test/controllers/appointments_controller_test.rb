@@ -25,7 +25,7 @@ class AppointmentsControllerTest < ActionDispatch::IntegrationTest
       post appointments_url, params: { appointment: { start: @appointment.end, end: @appointment.end + 1.hour, name: @appointment.name, room_id: @room.id } }
     end
 
-    assert_redirected_to appointment_url(Appointment.last)
+    assert_redirected_to appointments_url(room: @room.id)
   end
 
   test "should create appointment 2" do
