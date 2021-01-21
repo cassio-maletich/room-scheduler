@@ -6,3 +6,22 @@
     width: 400px;
     max-width: 100%;
 }
+.rbc-toolbar button{
+    color: #fff;
+    background-color: #3174ad;
+    border-color: #3174ad;
+    
+    &:focus,
+    &:hover,
+    &:active,
+    &.rbc-active,
+    &.rbc-active:hover, 
+    &.rbc-active:focus,
+    &:active:hover, 
+    &:active:focus, 
+    &:active{
+        color: #fff;
+        background-color: #265985;
+        border-color: #23537b;
+    }
+}
