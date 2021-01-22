@@ -24,10 +24,10 @@ class Schedule extends React.Component {
   convertAppointments = (appointments) => {
     appointments.map((a) => {
       // js date obj conversion 
-      a.start = moment(a.start).toDate();
-      a.end = moment(a.end).toDate();
-    });
-    this.setState({ appointments });
+      a.start = moment(a.start).toDate()
+      a.end = moment(a.end).toDate()
+    })
+    this.setState({ appointments })
   }
 
   setRoom = (room) => {
@@ -55,17 +55,12 @@ class Schedule extends React.Component {
   }
 
   removeItem = () => {
-    console.log('removeItem')
     let { appointments, current_event } = this.state
-    console.log('removeItem', current_event)
-    console.log('removeItem 2', appointments)
-    console.log('removeItem 2', appointments.filter((a) => a.id != current_event.id))
     this.setState({
       appointments: appointments.filter((a) => a.id != current_event.id ),
       current_event: null,
       current_event_modal: false
     })
-    console.log('closinggg Modal')
   }
 
   closeModal = () => {
@@ -182,7 +177,7 @@ class Schedule extends React.Component {
 
         </div>
       </React.Fragment>
-    );
+    )
   }
 }
 
