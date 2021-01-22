@@ -33,14 +33,14 @@ class AppointmentsController < ApplicationController
   def create
     @appointment = Appointment.new(appointment_params)
     @appointment.user = current_user
-    
+
     respond_to do |format|
       if @appointment.save
         format.html { redirect_to appointments_path(room: @appointment.room.id), notice: 'Appointment was successfully created.' }
-        format.json { render json: @appointment.id, status: :created }
+        format.json { render @appointment, status: :created }
       else
         format.html { render :new }
-        format.json { render json: @appointment.errors.full_messages.join(", "), status: :unprocessable_entity }
+        format.json { render json: { error: @appointment.errors.full_messages.join(", ") }, status: :unprocessable_entity }
       end
     end
   end
@@ -51,7 +51,7 @@ class AppointmentsController < ApplicationController
     respond_to do |format|
       if @appointment.update(appointment_params)
         format.html { redirect_to @appointment, notice: 'Appointment was successfully updated.' }
-        format.json { render :show, status: :ok, location: @appointment }
+        format.json
       else
         format.html { render :edit }
         format.json { render json: @appointment.errors, status: :unprocessable_entity }

@@ -7,7 +7,8 @@ class AppointmentsControllerTest < ActionDispatch::IntegrationTest
     @appointment = appointments(:one)
     @room = rooms(:one)
     @room2 = rooms(:two)
-    sign_in users(:one)
+    @user = users(:one)
+    sign_in @user
   end
 
   test "should get index" do
@@ -22,79 +23,85 @@ class AppointmentsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create appointment" do
     assert_difference 'Appointment.count' do     
-      post appointments_url, params: { appointment: { start: @appointment.end, end: @appointment.end + 1.hour, name: @appointment.name, room_id: @room.id } }
+      post appointments_url, params: { appointment: { start: @appointment.end, end: @appointment.end + 1.hour, name: @appointment.name, room_id: @room.id, user_id: @user.id } }
     end
-
-    assert_redirected_to appointments_url(room: @room.id)
+    assert_response(:redirect)
   end
 
   test "should create appointment 2" do
     assert_difference 'Appointment.count' do
       dt = DateTime.new 2021, 1, 15, 8, 0, 0, '-3'
-      post appointments_url, params: { appointment: { start: dt, end: dt + 10.hour, name: @appointment.name, room_id: @appointment.room_id } }
+      post appointments_url, params: { appointment: { start: dt, end: dt + 10.hour, name: @appointment.name, room_id: @appointment.room_id, user_id: @user.id } }
     end
   end
 
   test "should create appointment 3" do
     assert_difference 'Appointment.count' do
       dt = DateTime.new 2021, 1, 20, 16, 0, 0, '-3'
-      post appointments_url, params: { appointment: { start: dt, end: dt + 1.hour, name: @appointment.name, room_id: @appointment.room_id } }
+      post appointments_url, params: { appointment: { start: dt, end: dt + 1.hour, name: @appointment.name, room_id: @appointment.room_id, user_id: @user.id } }
     end
   end
 
   test "should not create appointment 1" do
     assert_no_difference 'Appointment.count' do
-      post appointments_url, params: { appointment: { start: @appointment.start, end: @appointment.end, name: @appointment.name, room_id: @room.id } }
+      post appointments_url, params: { appointment: { start: @appointment.start, end: @appointment.end, name: @appointment.name, room_id: @room.id, user_id: @user.id } }
     end
   end
 
   test "should not create appointment 2" do
     assert_no_difference 'Appointment.count' do
-      post appointments_url, params: { appointment: { start: @appointment.start - 1.hour, end: @appointment.end, name: @appointment.name, room_id: @room.id } }
+      post appointments_url, params: { appointment: { start: @appointment.start - 1.hour, end: @appointment.end, name: @appointment.name, room_id: @room.id, user_id: @user.id } }
     end
   end
 
   test "should not create appointment 3" do
     assert_no_difference 'Appointment.count' do
-      post appointments_url, params: { appointment: { start: @appointment.start - 15.minute, end: @appointment.end + 1.hour, name: @appointment.name, room_id: @room.id } }
+      post appointments_url, params: { appointment: { start: @appointment.start - 15.minute, end: @appointment.end + 1.hour, name: @appointment.name, room_id: @room.id, user_id: @user.id } }
     end
   end
 
   test "should not create appointment 4" do
     assert_no_difference 'Appointment.count' do
-      post appointments_url, params: { appointment: { start: @appointment.start, end: @appointment.end, name: @appointment.name, room_id: @room2.id } }
+      post appointments_url, params: { appointment: { start: @appointment.start, end: @appointment.end, name: @appointment.name, room_id: @room2.id, user_id: @user.id } }
     end
   end
 
   test "should not create appointment 5" do
     assert_no_difference 'Appointment.count' do
-      post appointments_url, params: { appointment: { start: @appointment.start + 15.minute, end: @appointment.end, name: @appointment.name, room_id: @room2.id } }
+      post appointments_url, params: { appointment: { start: @appointment.start + 15.minute, end: @appointment.end, name: @appointment.name, room_id: @room2.id, user_id: @user.id } }
     end
   end
 
   test "should not create appointment 6" do
     assert_no_difference 'Appointment.count' do
-      post appointments_url, params: { appointment: { start: @appointment.start + 15.minute, end: @appointment.end + 1.hour, name: @appointment.name, room_id: @room2.id } }
+      post appointments_url, params: { appointment: { start: @appointment.start + 15.minute, end: @appointment.end + 1.hour, name: @appointment.name, room_id: @room2.id, user_id: @user.id } }
     end
   end
 
   test "should not create appointment 7" do
     assert_no_difference 'Appointment.count' do
-      post appointments_url, params: { appointment: { start: @appointment.start + 10.minute, end: @appointment.start + 30.minute, name: @appointment.name, room_id: @room.id } }
+      post appointments_url, params: { appointment: { start: @appointment.start + 10.minute, end: @appointment.start + 30.minute, name: @appointment.name, room_id: @room.id, user_id: @user.id } }
     end
   end
 
   test "should not create appointment 8 - outsite of working hours" do
     assert_no_difference 'Appointment.count' do
       dt = DateTime.new 2021, 1, 15, 20, 0, 0, '-3'
-      post appointments_url, params: { appointment: { start: dt, end: dt + 10.hour, name: @appointment.name, room_id: @appointment.room_id } }
+      post appointments_url, params: { appointment: { start: dt, end: dt + 10.hour, name: @appointment.name, room_id: @appointment.room_id, user_id: @user.id } }
     end
   end
 
   test "should not create appointment 9 - outsite of working hours" do
     assert_no_difference 'Appointment.count' do
       dt = DateTime.new 2021, 1, 15, 10, 0, 0, '-3'
-      post appointments_url, params: { appointment: { start: dt, end: dt + 10.hour, name: @appointment.name, room_id: @appointment.room_id } }
+      post appointments_url, params: { appointment: { start: dt, end: dt + 10.hour, name: @appointment.name, room_id: @appointment.room_id, user_id: @user.id } }
+    end
+  end
+
+  test "should not create appointment 10 - != days" do
+    assert_no_difference 'Appointment.count' do
+      dt = DateTime.new 2021, 1, 15, 10, 0, 0, '-3'
+      post appointments_url, params: { appointment: { start: dt, end: dt + 1.day, name: @appointment.name, room_id: @appointment.room_id, user_id: @user.id } }
     end
   end
 
@@ -109,8 +116,8 @@ class AppointmentsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update appointment" do
-    patch appointment_url(@appointment), params: { appointment: { start: @appointment.start, end: @appointment.end, name: @appointment.name, room_id: @appointment.room_id } }
-    assert_redirected_to appointment_url(@appointment)
+    patch appointment_url(@appointment), params: { appointment: { start: @appointment.start, end: @appointment.end, name: @appointment.name, room_id: @appointment.room_id, user_id: @user.id } }
+    assert_response(:success)
   end
 
   test "should destroy appointment" do

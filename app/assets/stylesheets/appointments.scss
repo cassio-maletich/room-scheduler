@@ -27,7 +27,7 @@
 }
 
 .form-control-xs{
-    @extend .form-control;
+    @extend .form-control !optional;
     width: auto;
     display: inline;
 }

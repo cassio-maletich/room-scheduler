@@ -2,9 +2,10 @@ import React from "react"
 import PropTypes from "prop-types"
 import { Calendar, momentLocalizer, Views } from 'react-big-calendar'
 import moment from 'moment'
-import { translations, csrfToken } from './Constants'
+import { translations } from './Constants'
 import RoomSelector from './RoomSelector'
 import AppointmentDetails from './AppointmentDetails'
+import { fetchAppointments, fetchRemoveAppointment, fetchCreateAppointment } from './Network'
 
 const localizer = momentLocalizer(moment)
 
@@ -24,103 +25,65 @@ class Schedule extends React.Component {
   convertAppointments = (appointments) => {
     appointments.map((a) => {
       // js date obj conversion 
-      a.start = moment(a.start).toDate();
-      a.end = moment(a.end).toDate();
-    });
-    this.setState({ appointments });
+      a.start = moment(a.start).toDate()
+      a.end = moment(a.end).toDate()
+    })
+    this.setState({ appointments })
   }
 
   setRoom = (room) => {
     if (this.state.current_room.id != room.id) {
       this.setState({ current_room: room })
       const url = `/appointments?room=${room.id}`
-      fetch(url, {
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
-      })
-        .then((r) => {
-          if (r.status == 200) {
-            window.history.replaceState(null, "", url)
-            r.json().then((data) => {
-              this.convertAppointments(data)
-            })
-          }
-        })
-        .catch((r) => {
-          console.error("Não foi possível buscar a agenda", r.status, r)
-        })
+      fetchAppointments(url, this.convertAppointments)
     }
   }
 
-  removeItem = () => {
-    console.log('removeItem')
-    let { appointments, current_event } = this.state
-    console.log('removeItem', current_event)
-    console.log('removeItem 2', appointments)
-    console.log('removeItem 2', appointments.filter((a) => a.id != current_event.id))
+  removeAppointment = () => {
+    const url = `/appointments/${this.state.current_event.id}`
+    fetchRemoveAppointment(url, this.callbackRemoveSuccess)
+  }
+
+  handleSelectCreation = ({ start, end }) => {
+    const name = window.prompt('Nome do novo evento')
+    if (!name) return
+    if (start == end) {
+      // handle all day creation
+      start = moment(start).set({ h: 8 })
+      end = moment(end).set({ h: 18 })
+    }
+    let appointment = {
+      name,
+      start, 
+      end,
+      room_id: this.state.current_room.id,
+    }
+
+    fetchCreateAppointment(appointment, this.callbackCreateSuccess, this.callbackCreateError)
+  }
+
+  callbackCreateSuccess = (appointment) => {
     this.setState({
-      appointments: appointments.filter((a) => a.id != current_event.id ),
+      appointments: [ ...this.state.appointments, appointment ],
+      error: null
+    })
+  }
+
+  callbackCreateError = (error) => {
+    this.setState({ error: error })
+  }
+
+  callbackRemoveSuccess = () => {
+    let { appointments, current_event } = this.state
+    this.setState({
+      appointments: appointments.filter((a) => a.id != current_event.id),
       current_event: null,
       current_event_modal: false
     })
-    console.log('closinggg Modal')
   }
 
   closeModal = () => {
     this.setState({ current_event_modal: false })
-  }
-
-  handleSelectCreation = ({ start, end }) => {
-    const title = window.prompt('Nome do novo evento')
-    let appointment = {
-      name: title,
-      room_id: this.state.current_room.id,
-      start, 
-      end
-    }
-    console.log('title', appointment)
-    if (title) {
-      fetch('/appointments/', {
-        method: 'POST',
-        headers: {
-          "X-CSRF-Token": csrfToken,
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          appointment: appointment
-        })
-      })
-        .then((r) => {
-          console.log('r', r.text)
-          const status = r.status;
-
-          return r.text().then((data) => {
-            if (status == 201) {
-              console.log('data', data)
-              this.setState({
-                appointments: [
-                  ...this.state.appointments,
-                  {
-                    ...appointment,
-                    id: data,
-                    user_id: this.props.current_user.id
-                  },
-                ],
-                error: null
-              })
-            } else {
-              console.log("Erro na criação", data);
-              this.setState({ error: data })
-            }
-          })
-        })
-        .catch((r) => {
-          console.error("Não foi possível criar o evento", r)
-        })
-    }
   }
 
   render () {
@@ -136,9 +99,10 @@ class Schedule extends React.Component {
             </div>
             <div>
               {/* New appointment btn */}
-              <a href={`/appointments/new?room_id=${this.state.current_room.id}`} className="btn btn-primary">Novo agendamento</a>
+              <a href={`/appointments/new?room_id=${this.state.current_room.id}`} className="btn btn-primary">Novo evento</a>
             </div>
           </div>
+          <p className="text-muted text-md-right mb-4">Você pode arrastar e soltar em um espaço vazio na agenda para criar um evento</p>
 
           {/* Calendar component */}
           <Calendar
@@ -162,14 +126,14 @@ class Schedule extends React.Component {
             current_user={this.props.current_user} 
             modal={this.state.current_event_modal} 
             callbackClose={this.closeModal}
-            callbackRemove={this.removeItem}
+            callbackRemove={this.removeAppointment}
           />
 
           {/* Feedback for creation error */}
           { !!this.state.error &&
-            <div id="notice" class="alert alert-danger alert-dismissible fixed-bottom mx-auto w-75 fade show" role="alert">
+            <div id="notice" className="alert alert-danger alert-dismissible fade show fixed-bottom mx-auto w-75" role="alert">
               { this.state.error }
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <button type="button" className="close" aria-label="Close" onClick={() => this.setState({ error: null })}>
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
@@ -177,7 +141,7 @@ class Schedule extends React.Component {
 
         </div>
       </React.Fragment>
-    );
+    )
   }
 }
 
