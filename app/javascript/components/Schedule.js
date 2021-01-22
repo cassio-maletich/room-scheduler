@@ -2,7 +2,7 @@ import React from "react"
 import PropTypes from "prop-types"
 import { Calendar, momentLocalizer, Views } from 'react-big-calendar'
 import moment from 'moment'
-import { translations, csrfToken } from './Constants'
+import { translations } from './Constants'
 import RoomSelector from './RoomSelector'
 import AppointmentDetails from './AppointmentDetails'
 import { fetchAppointments, fetchRemoveAppointment, fetchCreateAppointment } from './Network'
@@ -40,19 +40,8 @@ class Schedule extends React.Component {
   }
 
   removeAppointment = () => {
-    let { appointments, current_event } = this.state
-    const url = `/appointments/${current_event.id}`
-    fetchRemoveAppointment(url, () => {
-      this.setState({
-        appointments: appointments.filter((a) => a.id != current_event.id),
-        current_event: null,
-        current_event_modal: false
-      })
-    })
-  }
-
-  closeModal = () => {
-    this.setState({ current_event_modal: false })
+    const url = `/appointments/${this.state.current_event.id}`
+    fetchRemoveAppointment(url, this.callbackRemoveSuccess)
   }
 
   handleSelectCreation = ({ start, end }) => {
@@ -79,9 +68,22 @@ class Schedule extends React.Component {
       error: null
     })
   }
-  
+
   callbackCreateError = (error) => {
     this.setState({ error: error })
+  }
+
+  callbackRemoveSuccess = () => {
+    let { appointments, current_event } = this.state
+    this.setState({
+      appointments: appointments.filter((a) => a.id != current_event.id),
+      current_event: null,
+      current_event_modal: false
+    })
+  }
+
+  closeModal = () => {
+    this.setState({ current_event_modal: false })
   }
 
   render () {
@@ -97,9 +99,10 @@ class Schedule extends React.Component {
             </div>
             <div>
               {/* New appointment btn */}
-              <a href={`/appointments/new?room_id=${this.state.current_room.id}`} className="btn btn-primary">Novo agendamento</a>
+              <a href={`/appointments/new?room_id=${this.state.current_room.id}`} className="btn btn-primary">Novo evento</a>
             </div>
           </div>
+          <p className="text-muted text-md-right mb-4">Você pode arrastar e soltar em um espaço vazio na agenda para criar um evento</p>
 
           {/* Calendar component */}
           <Calendar
@@ -128,9 +131,9 @@ class Schedule extends React.Component {
 
           {/* Feedback for creation error */}
           { !!this.state.error &&
-            <div id="notice" class="alert alert-danger alert-dismissible fade show fixed-bottom mx-auto w-75" role="alert">
+            <div id="notice" className="alert alert-danger alert-dismissible fade show fixed-bottom mx-auto w-75" role="alert">
               { this.state.error }
-              <button type="button" class="close" aria-label="Close" onClick={() => this.setState({ error: null })}>
+              <button type="button" className="close" aria-label="Close" onClick={() => this.setState({ error: null })}>
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
