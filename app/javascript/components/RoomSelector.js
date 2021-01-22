@@ -9,7 +9,7 @@ class RoomSelector extends React.Component {
     return (
       <React.Fragment>
         <div>
-          <div className="btn-group btn-group-toggle mb-4">
+          <div className="btn-group btn-group-toggle">
             {this.props.rooms.map((room, idx) => {
               return (
                 <button key={idx} className={`btn btn-primary ${room.id == this.props.current.id && 'active'}`} onClick={() => this.callbackSetRoom(room)}>

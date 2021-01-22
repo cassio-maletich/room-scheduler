@@ -1,8 +1,7 @@
 import React from "react"
-import PropTypes from "prop-types"
 import Modal from 'react-modal'
 import moment from 'moment'
-import { customModalStyles, csrfToken } from './Constants'
+import { customModalStyles } from './Constants'
 
 class AppointmentDetails extends React.Component {
   requestCloseModal = () => {
