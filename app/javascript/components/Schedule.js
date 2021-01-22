@@ -84,7 +84,7 @@ class Schedule extends React.Component {
       start, 
       end
     }
-    console.log('title', appointment)
+    console.log('[handleSelectCreation] appointment', appointment)
     if (title) {
       fetch('/appointments/', {
         method: 'POST',
@@ -98,26 +98,27 @@ class Schedule extends React.Component {
         })
       })
         .then((r) => {
-          console.log('r', r.text)
-          const status = r.status;
-
-          return r.text().then((data) => {
+          const { status } = r
+          r.json().then((data) => {
             if (status == 201) {
-              console.log('data', data)
+              const user_id = this.props.current_user.id
               this.setState({
                 appointments: [
                   ...this.state.appointments,
                   {
                     ...appointment,
-                    id: data,
-                    user_id: this.props.current_user.id
-                  },
+                    id: data["id"],
+                    user_id
+                  }
                 ],
                 error: null
               })
+            } else if (status == 422) {
+              console.log("Erro na criação", data["error"], data);
+              this.setState({ error: data["error"] })
             } else {
-              console.log("Erro na criação", data);
-              this.setState({ error: data })
+              console.error("Erro", data);
+              this.setState({ error: data["error"] })
             }
           })
         })
@@ -171,9 +172,9 @@ class Schedule extends React.Component {
 
           {/* Feedback for creation error */}
           { !!this.state.error &&
-            <div id="notice" class="alert alert-danger alert-dismissible fixed-bottom mx-auto w-75 fade show" role="alert">
+            <div id="notice" class="alert alert-danger alert-dismissible fade show fixed-bottom mx-auto w-75" role="alert">
               { this.state.error }
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <button type="button" class="close" aria-label="Close" onClick={() => this.setState({ error: null })}>
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
