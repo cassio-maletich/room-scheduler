@@ -21,7 +21,8 @@ export const customModalStyles = {
         right: 'auto',
         bottom: 'auto',
         marginRight: '-50%',
-        transform: 'translate(-50%, -50%)'
+        transform: 'translate(-50%, -50%)',
+        maxWidth: '90%'
     },
     overlay: {
         backgroundColor: "rgba(0, 0, 0, 0.6)",
