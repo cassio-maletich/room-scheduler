@@ -68,59 +68,52 @@ class Schedule extends React.Component {
   }
 
   handleSelectCreation = ({ start, end }) => {
-    const title = window.prompt('Nome do novo evento')
+    const name = window.prompt('Nome do novo evento')
+    if (!name) return
     if (start == end) {
-      moment(start).set({ h: 8 })
-      moment(end).set({ h: 18 })
+      // handle all day creation
+      start = moment(start).set({ h: 8 })
+      end = moment(end).set({ h: 18 })
     }
     let appointment = {
-      name: title,
-      room_id: this.state.current_room.id,
+      name,
       start, 
-      end
+      end,
+      room_id: this.state.current_room.id,
     }
     console.log('[handleSelectCreation] appointment', appointment)
-    if (title) {
-      fetch('/appointments/', {
-        method: 'POST',
-        headers: {
-          "X-CSRF-Token": csrfToken,
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          appointment: appointment
+
+    fetch('/appointments/', {
+      method: 'POST',
+      headers: {
+        'X-CSRF-Token': csrfToken,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ appointment })
+    })
+      .then((r) => {
+        const { status } = r
+        r.json().then((data) => {
+          if (status == 201) {
+            appointment['id'] = data['id']
+            appointment['user_id'] = data['user_id']
+            this.setState({
+              appointments: [ ...this.state.appointments, appointment ],
+              error: null
+            })
+          } else if (status == 422) {
+            console.log('Erro na criação', data['error'], data)
+            this.setState({ error: data['error'] })
+          } else {
+            console.error('Erro', data)
+            this.setState({ error: data['error'] })
+          }
         })
       })
-        .then((r) => {
-          const { status } = r
-          r.json().then((data) => {
-            if (status == 201) {
-              const user_id = this.props.current_user.id
-              this.setState({
-                appointments: [
-                  ...this.state.appointments,
-                  {
-                    ...appointment,
-                    id: data["id"],
-                    user_id
-                  }
-                ],
-                error: null
-              })
-            } else if (status == 422) {
-              console.log("Erro na criação", data["error"], data);
-              this.setState({ error: data["error"] })
-            } else {
-              console.error("Erro", data);
-              this.setState({ error: data["error"] })
-            }
-          })
-        })
-        .catch((r) => {
-          console.error("Não foi possível criar o evento", r)
-        })
-    }
+      .catch((e) => {
+        console.error('Não foi possível criar o evento', e)
+      })
   }
 
   render () {
