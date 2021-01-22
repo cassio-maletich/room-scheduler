@@ -5,6 +5,7 @@ import moment from 'moment'
 import { translations, csrfToken } from './Constants'
 import RoomSelector from './RoomSelector'
 import AppointmentDetails from './AppointmentDetails'
+import { fetchAppointments } from './Network'
 
 const localizer = momentLocalizer(moment)
 
@@ -34,23 +35,7 @@ class Schedule extends React.Component {
     if (this.state.current_room.id != room.id) {
       this.setState({ current_room: room })
       const url = `/appointments?room=${room.id}`
-      fetch(url, {
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
-      })
-        .then((r) => {
-          if (r.status == 200) {
-            window.history.replaceState(null, "", url)
-            r.json().then((data) => {
-              this.convertAppointments(data)
-            })
-          }
-        })
-        .catch((r) => {
-          console.error("Não foi possível buscar a agenda", r.status, r)
-        })
+      fetchAppointments(url, this.convertAppointments)
     }
   }
 
