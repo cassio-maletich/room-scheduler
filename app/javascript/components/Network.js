@@ -1,3 +1,5 @@
+import { csrfToken } from './Constants'
+
 export const fetchAppointments = (url, callback) => {
     fetch(url, {
         headers: {
@@ -16,4 +18,25 @@ export const fetchAppointments = (url, callback) => {
         .catch((r) => {
             console.error("Não foi possível buscar a agenda", r.status, r)
         })
+}
+
+export const fetchRemoveAppointment = (url, callback) => {
+    fetch(url, {
+        method: 'DELETE',
+        headers: {
+            "X-CSRF-Token": csrfToken,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    })
+        .then((r) => {
+            console.log('r', r)
+            if (r.status == 204) {
+                callback()
+            }
+        })
+        .catch((e) => {
+            console.error("Não foi possível deletar o evento", current_event, e)
+        })
+
 }

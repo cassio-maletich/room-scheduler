@@ -5,7 +5,7 @@ import moment from 'moment'
 import { translations, csrfToken } from './Constants'
 import RoomSelector from './RoomSelector'
 import AppointmentDetails from './AppointmentDetails'
-import { fetchAppointments } from './Network'
+import { fetchAppointments, fetchRemoveAppointment } from './Network'
 
 const localizer = momentLocalizer(moment)
 
@@ -42,27 +42,13 @@ class Schedule extends React.Component {
   removeAppointment = () => {
     let { appointments, current_event } = this.state
     const url = `/appointments/${current_event.id}`
-    fetch(url, {
-      method: 'DELETE',
-      headers: {
-        "X-CSRF-Token": csrfToken,
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
+    fetchRemoveAppointment(url, () => {
+      this.setState({
+        appointments: appointments.filter((a) => a.id != current_event.id),
+        current_event: null,
+        current_event_modal: false
+      })
     })
-      .then((r) => {
-        console.log('r', r)
-        if (r.status == 204) {
-          this.setState({
-            appointments: appointments.filter((a) => a.id != current_event.id),
-            current_event: null,
-            current_event_modal: false
-          })
-        }
-      })
-      .catch((e) => {
-        console.error("Não foi possível deletar o evento", current_event, e)
-      })
   }
 
   closeModal = () => {
