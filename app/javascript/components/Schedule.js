@@ -75,8 +75,8 @@ class Schedule extends React.Component {
   handleSelectCreation = ({ start, end }) => {
     const title = window.prompt('Nome do novo evento')
     if (start == end) {
-      start.set({ h: 8 })
-      end.set({ h: 18 })
+      moment(start).set({ h: 8 })
+      moment(end).set({ h: 18 })
     }
     let appointment = {
       name: title,
