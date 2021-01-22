@@ -1,24 +1,16 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+The purpose of this project is to control the schedule for room usage. Every user signed in can create and delete appointments to every registered room.
 
-Things you may want to cover:
+## TODO
 
-* Ruby version
+ - [x] React Modal
+ - [x] exclude FDS & hours > 18 && hours < 8
+ - [x] Form new appointment
+ - [x] Create events with drag n drop
+ - [x] admin
+ - [ ] Appointment new: Date time picker
+ - [ ] my account
+ - [ ] about
+ - [ ] Edit events with drag n drop
 
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
