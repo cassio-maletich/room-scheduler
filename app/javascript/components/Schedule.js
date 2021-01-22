@@ -54,13 +54,30 @@ class Schedule extends React.Component {
     }
   }
 
-  removeItem = () => {
+  removeAppointment = () => {
     let { appointments, current_event } = this.state
-    this.setState({
-      appointments: appointments.filter((a) => a.id != current_event.id ),
-      current_event: null,
-      current_event_modal: false
+    const url = `/appointments/${current_event.id}`
+    fetch(url, {
+      method: 'DELETE',
+      headers: {
+        "X-CSRF-Token": csrfToken,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
     })
+      .then((r) => {
+        console.log('r', r)
+        if (r.status == 204) {
+          this.setState({
+            appointments: appointments.filter((a) => a.id != current_event.id),
+            current_event: null,
+            current_event_modal: false
+          })
+        }
+      })
+      .catch((e) => {
+        console.error("Não foi possível deletar o evento", current_event, e)
+      })
   }
 
   closeModal = () => {
@@ -155,7 +172,7 @@ class Schedule extends React.Component {
             current_user={this.props.current_user} 
             modal={this.state.current_event_modal} 
             callbackClose={this.closeModal}
-            callbackRemove={this.removeItem}
+            callbackRemove={this.removeAppointment}
           />
 
           {/* Feedback for creation error */}

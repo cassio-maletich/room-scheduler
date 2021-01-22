@@ -9,26 +9,9 @@ class AppointmentDetails extends React.Component {
     this.props.callbackClose(true)
   }
 
-  removeAppointment = (id) => {
-    console.log('id', id)
-    const url = `/appointments/${id}`
-    fetch(url, {
-      method: 'DELETE',
-      headers: {
-        "X-CSRF-Token": csrfToken,
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
-    })
-      .then((r) => {
-        console.log('r', r)
-        if (r.status == 204) {
-          this.props.callbackRemove()
-        }
-      })
-      .catch((r) => {
-        console.error("Não foi possível deletar a agenda", id, r)
-      })
+  // TODO extract to helper functions
+  removeAppointment = () => {
+    this.props.callbackRemove()
   }
 
   render () {
@@ -54,7 +37,7 @@ class AppointmentDetails extends React.Component {
               <label>Hora:</label><br />
               <h5 className="mb-3">{moment(current_event.start).format("HH:mm")} até {moment(current_event.end).format("HH:mm")}</h5>
               { this.props.current_user.id == current_event.user_id &&
-                <button type="button" onClick={() => this.removeAppointment(current_event.id)} className="btn btn-danger ml-auto d-block">Excluir reserva</button>
+                <button type="button" onClick={this.removeAppointment} className="btn btn-danger ml-auto d-block">Excluir reserva</button>
               }
             </div>
           }
