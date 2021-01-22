@@ -40,3 +40,36 @@ export const fetchRemoveAppointment = (url, callback) => {
         })
 
 }
+
+export const fetchCreateAppointment = (appointment, callbackCreateSuccess, callbackCreateError) => {
+    console.log('[fetchCreateAppointment] appointment', appointment)
+
+    fetch('/appointments/', {
+      method: 'POST',
+      headers: {
+        'X-CSRF-Token': csrfToken,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ appointment })
+    })
+      .then((r) => {
+        const { status } = r
+        r.json().then((data) => {
+          if (status == 201) {
+            appointment['id'] = data['id']
+            appointment['user_id'] = data['user_id']
+            callbackCreateSuccess(appointment)
+          } else if (status == 422) {
+            console.log('Erro na criação', data['error'], data)
+            callbackCreateError(data['error'])
+          } else {
+            console.error('Erro', data)
+            callbackCreateError(data['error'])
+          }
+        })
+      })
+      .catch((e) => {
+        console.error('Não foi possível criar o evento', e)
+      })
+}

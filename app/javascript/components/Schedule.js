@@ -5,7 +5,7 @@ import moment from 'moment'
 import { translations, csrfToken } from './Constants'
 import RoomSelector from './RoomSelector'
 import AppointmentDetails from './AppointmentDetails'
-import { fetchAppointments, fetchRemoveAppointment } from './Network'
+import { fetchAppointments, fetchRemoveAppointment, fetchCreateAppointment } from './Network'
 
 const localizer = momentLocalizer(moment)
 
@@ -69,39 +69,19 @@ class Schedule extends React.Component {
       end,
       room_id: this.state.current_room.id,
     }
-    console.log('[handleSelectCreation] appointment', appointment)
 
-    fetch('/appointments/', {
-      method: 'POST',
-      headers: {
-        'X-CSRF-Token': csrfToken,
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ appointment })
+    fetchCreateAppointment(appointment, this.callbackCreateSuccess, this.callbackCreateError)
+  }
+
+  callbackCreateSuccess = (appointment) => {
+    this.setState({
+      appointments: [ ...this.state.appointments, appointment ],
+      error: null
     })
-      .then((r) => {
-        const { status } = r
-        r.json().then((data) => {
-          if (status == 201) {
-            appointment['id'] = data['id']
-            appointment['user_id'] = data['user_id']
-            this.setState({
-              appointments: [ ...this.state.appointments, appointment ],
-              error: null
-            })
-          } else if (status == 422) {
-            console.log('Erro na criação', data['error'], data)
-            this.setState({ error: data['error'] })
-          } else {
-            console.error('Erro', data)
-            this.setState({ error: data['error'] })
-          }
-        })
-      })
-      .catch((e) => {
-        console.error('Não foi possível criar o evento', e)
-      })
+  }
+  
+  callbackCreateError = (error) => {
+    this.setState({ error: error })
   }
 
   render () {
