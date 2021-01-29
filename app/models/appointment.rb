@@ -23,7 +23,7 @@ class Appointment < ApplicationRecord
   end
   
   def check_conflict
-    if Appointment.where(room_id: self.room_id).where('(start >= :st AND start < :end) OR ("appointments"."start" < :st AND "appointments"."end" > :st)', { st: self.start.to_s, end: self.end.to_s }).present?
+    if Appointment.where(room_id: self.room_id).where('(start >= :st AND start < :end) OR ("appointments"."start" <= :st AND "appointments"."end" > :st)', { st: self.start.to_s, end: self.end.to_s }).present?
       errors.add(:date, "Conflito com outro evento marcado")
     end
   end
